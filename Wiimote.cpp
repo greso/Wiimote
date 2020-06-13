@@ -824,7 +824,7 @@ float balance_interpolate(uint8_t pos, uint16_t *values, uint16_t *cal) {
     weight = 17 * (float)(values[pos]-cal[pos])/(float)(cal[pos+4]-cal[pos]);
   }
   else /* if (values[pos] > cal[pos+5])*/ {//34kg
-    weight = 17 + 17 * (float)(values[pos]-cal[pos+4])/(float)(cal[pos+8]-cal[pos+4]);
+    weight = 17 + (17 * (float)(values[pos]-cal[pos+4])/(float)(cal[pos+8]-cal[pos+4]));
   }
 
   return weight;
@@ -930,8 +930,9 @@ void Wiimote::set_rumble(uint16_t handle, bool rumble){
 
 void Wiimote::get_balance_weight(uint8_t *data, float *weight) {
   uint8_t* ext = data+4;
-
   uint16_t values[4];
+
+
 
   values[BALANCE_POSITION_TOP_RIGHT]    = ext[0] * 256 + ext[1]; //TopRight
   values[BALANCE_POSITION_BOTTOM_RIGHT] = ext[2] * 256 + ext[3]; //BottomRight
@@ -939,7 +940,7 @@ void Wiimote::get_balance_weight(uint8_t *data, float *weight) {
   values[BALANCE_POSITION_BOTTOM_LEFT]  = ext[6] * 256 + ext[7]; //BottomLeft
 
   weight[BALANCE_POSITION_TOP_RIGHT]    = balance_interpolate(BALANCE_POSITION_TOP_RIGHT, values, balance_calibration);
-  weight[BALANCE_POSITION_BOTTOM_RIGHT] = balance_interpolate(BALANCE_POSITION_TOP_RIGHT, values, balance_calibration);
-  weight[BALANCE_POSITION_TOP_LEFT]     = balance_interpolate(BALANCE_POSITION_TOP_RIGHT, values, balance_calibration);
-  weight[BALANCE_POSITION_BOTTOM_LEFT]  = balance_interpolate(BALANCE_POSITION_TOP_RIGHT, values, balance_calibration);
+  weight[BALANCE_POSITION_BOTTOM_RIGHT] = balance_interpolate(BALANCE_POSITION_BOTTOM_RIGHT, values, balance_calibration);
+  weight[BALANCE_POSITION_TOP_LEFT]     = balance_interpolate(BALANCE_POSITION_TOP_LEFT, values, balance_calibration);
+  weight[BALANCE_POSITION_BOTTOM_LEFT]  = balance_interpolate(BALANCE_POSITION_BOTTOM_LEFT, values, balance_calibration);
 }
